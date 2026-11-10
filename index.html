@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>belluno · Portas</title>
+    <link rel="stylesheet" href="/style.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="topbar-inner">
+        <p class="mark">belluno</p>
+        <h1>Portas</h1>
+      </div>
+    </header>
+    <main class="wrap">
+      <form id="scan-form" class="panel">
+        <div class="toolbar">
+          <label class="field grow" for="host">
+            <span>IP</span>
+            <input
+              id="host"
+              name="host"
+              type="text"
+              inputmode="decimal"
+              autocomplete="off"
+              spellcheck="false"
+              placeholder="192.168.0.1"
+              required
+            />
+          </label>
+          <label class="field wait" for="timeout">
+            <span>Espera</span>
+            <select id="timeout" name="timeout">
+              <option value="0.4">0,4 s</option>
+              <option value="0.8" selected>0,8 s</option>
+              <option value="2">2 s</option>
+            </select>
+          </label>
+          <button id="submit" type="submit">Mapear</button>
+          <button id="stop" type="button" class="ghost" hidden>Parar</button>
+        </div>
+
+        <div class="modes">
+          <label class="check" for="mode-all">
+            <input id="mode-all" type="radio" name="mode" value="all" checked />
+            <span>Todas</span>
+          </label>
+          <label class="check" for="mode-common">
+            <input id="mode-common" type="radio" name="mode" value="common" />
+            <span>Comuns</span>
+          </label>
+          <label class="check" for="mode-custom">
+            <input id="mode-custom" type="radio" name="mode" value="custom" />
+            <span>Faixa</span>
+          </label>
+          <div id="extra-wrap" class="hidden">
+            <input
+              id="extra"
+              name="extra"
+              type="text"
+              autocomplete="off"
+              spellcheck="false"
+              placeholder="80, 443, 8000-9000"
+            />
+          </div>
+        </div>
+        <p id="status" class="status" role="status"></p>
+      </form>
+      <section id="results" class="results"></section>
+    </main>
+    <script src="/app.js"></script>
+  </body>
+</html>
