@@ -22,7 +22,16 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import urlparse
 
-ROOT = Path(__file__).resolve().parent
+def app_root() -> Path:
+    if getattr(sys, "frozen", False):
+        bundled = getattr(sys, "_MEIPASS", None)
+        if bundled:
+            return Path(bundled)
+        return Path(sys.executable).resolve().parent
+    return Path(__file__).resolve().parent
+
+
+ROOT = app_root()
 STATIC = {
     "/": ("index.html", "text/html; charset=utf-8"),
     "/index.html": ("index.html", "text/html; charset=utf-8"),
@@ -592,17 +601,22 @@ def main() -> None:
         except (AttributeError, OSError):
             pass
     host = "127.0.0.1"
+    httpd = None
     port = 8765
-    try:
-        httpd = ThreadingHTTPServer((host, port), Handler)
-    except OSError:
-        print("A porta 8765 já está em uso. Feche a outra janela deste app e abra de novo.")
+    for candidate in range(8765, 8776):
+        try:
+            httpd = ThreadingHTTPServer((host, candidate), Handler)
+            port = candidate
+            break
+        except OSError:
+            continue
+    if httpd is None:
+        print("Não consegui abrir o app. Feche a outra janela e tente de novo.")
         sys.exit(1)
     url = f"http://{host}:{port}"
-    print(f"Mapeamento de portas em {url}")
-    print("Deixe esta janela aberta. Feche a janela para encerrar o app.")
-    if os.name == "nt":
-        threading.Timer(0.8, lambda: webbrowser.open(url)).start()
+    print(f"Mapeamento de portas em {url}", flush=True)
+    print("Deixe esta janela aberta. Feche a janela para encerrar o app.", flush=True)
+    threading.Timer(0.8, lambda: webbrowser.open(url)).start()
     try:
         httpd.serve_forever()
     except KeyboardInterrupt:
